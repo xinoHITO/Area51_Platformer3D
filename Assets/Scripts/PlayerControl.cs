@@ -14,12 +14,14 @@ public class PlayerControl : MonoBehaviour {
 	[Header("JUMP")]
 	public float _gravity = 9.8f;
 	public float _jumpForce = 10;
+	[Header("ATTACK")]
+	public GameObject _swordR;
+	public GameObject _swordL;
 
 
 	private Animator _animator;
 	private Rigidbody _rigidbody;
 	private CapsuleCollider _collider;
-
 	//esta variable indica si te puedes parar despues de haberte agachado
 	//dependiendo si hay espacio encima de ti para que te puedas parar
 	private bool _canStandUp;
@@ -34,8 +36,10 @@ public class PlayerControl : MonoBehaviour {
 	private bool _pressedShift;
 	private bool _pressedControl;
 	private bool _pressedSpace;
+	private bool _pressedLeftClick;
 	// Use this for initialization
 	void Start () {
+		
 		_animator = GetComponent<Animator> ();
 		_rigidbody = GetComponent<Rigidbody> ();
 		_collider = GetComponent<CapsuleCollider> ();
@@ -45,6 +49,7 @@ public class PlayerControl : MonoBehaviour {
 	void Update () {
 		_v = Input.GetAxis ("Vertical");
 		_h = Input.GetAxis("Horizontal");
+		_pressedLeftClick = Input.GetMouseButtonDown (0);
 		_pressedShift = Input.GetKey (KeyCode.LeftShift);
 		_pressedControl = Input.GetKey (KeyCode.LeftControl);
 		_pressedSpace = Input.GetKeyDown (KeyCode.Space);
@@ -142,6 +147,12 @@ public class PlayerControl : MonoBehaviour {
 		_animator.SetFloat ("verticalSpeed", result);
 		_animator.SetBool ("isGrounded", _isGrounded);
 
+		if (_isGrounded) {
+			if (_pressedLeftClick) {
+				_animator.SetTrigger ("attack");
+			}
+		}
+
 	}
 
 	void Crouch(){
@@ -156,5 +167,21 @@ public class PlayerControl : MonoBehaviour {
 				_collider.center = newCenter;	
 			}
 		}
+	}
+
+	void ActivateRightHit(){
+		_swordL.GetComponent<Collider> ().enabled = false;
+		_swordR.GetComponent<Collider> ().enabled = true;
+	}
+
+	void ActivateLeftHit(){
+		_swordL.GetComponent<Collider> ().enabled = true;
+		_swordR.GetComponent<Collider> ().enabled = false;
+	}
+
+
+	void DeactivateHits(){
+		_swordL.GetComponent<Collider> ().enabled = false;
+		_swordR.GetComponent<Collider> ().enabled = false;
 	}
 }
