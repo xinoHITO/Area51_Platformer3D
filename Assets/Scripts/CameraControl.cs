@@ -10,15 +10,64 @@ public class CameraControl : MonoBehaviour {
 	public bool _invertAxis = false;
 
 	public float _moveLerpSpeed = 5;
-	public float _rotateLerpSpeed = 5;
+	public float _wallClipLerp = 5;
+
+	public LayerMask _raycastMask;
+
+
 
 	private float _angle = 0;
+	private float _currentDistance;
+
 	// Use this for initialization
 	void Start () {
-		
+		_currentDistance = _distance;
 	}
 	
-	void LateUpdate () {
+	void FixedUpdate () {
+		ProtectFromWallClip ();
+
+		FollowTarget ();
+	}
+
+
+	void ProtectFromWallClip(){
+		Vector3 rayDirection = (_target.position + _offset) - transform.position;
+		rayDirection.Normalize ();
+		RaycastHit hitInfo;
+		bool hit = Physics.Raycast(transform.position,rayDirection,out hitInfo,_currentDistance,_raycastMask.value);
+		if (hit) {
+			Debug.Log ("forward:"+hitInfo.collider.name);
+
+			//si hay un obstáculo entre la camara y el player
+			if (hitInfo.collider.transform != _target) {
+				//la camara se acerca al player
+				_currentDistance -= Time.fixedDeltaTime * _wallClipLerp;
+				//pero limitamos para que nunca sea negativo
+				if (_currentDistance < 0.5f) {
+					_currentDistance = 0.5f;
+				}
+			}
+			Debug.DrawRay (transform.position, rayDirection * _distance, Color.green);
+		} else {
+			Debug.DrawRay (transform.position, -rayDirection * (_distance-_currentDistance), Color.red);
+			bool hitBackwards = Physics.Raycast (transform.position, -rayDirection,out hitInfo, _distance - _currentDistance, _raycastMask.value);
+			if (!hitBackwards) {
+				_currentDistance += Time.fixedDeltaTime * _wallClipLerp;
+				if (_currentDistance > _distance) {
+					_currentDistance = _distance;
+				}
+				Debug.DrawRay (transform.position, -rayDirection * (_distance - _currentDistance), Color.magenta);
+				Debug.Log ("NO backwards");
+
+			} else {
+				Debug.DrawRay (transform.position, -rayDirection * (_distance-_currentDistance), Color.cyan);
+				Debug.Log ("backwards:" + hitInfo.collider.name);
+			}
+		}
+	}
+
+	void FollowTarget(){
 		//esto detecta el movimiento lateral del mouse
 		float mouseX = Input.GetAxis ("Mouse X");
 
@@ -33,11 +82,12 @@ public class CameraControl : MonoBehaviour {
 		}
 		Vector3 targetPos = _target.position + _offset;
 		Vector3 direction = Quaternion.Euler(0,_angle,0) * new Vector3 (0, 0, 1);
-		Vector3 finalPos = targetPos + (direction*-_distance);
+
+
+		Vector3 finalPos = targetPos + (direction*-_currentDistance);
 		transform.position = Vector3.Lerp (transform.position, finalPos, Time.deltaTime * _moveLerpSpeed);
-		 
-		Quaternion finalRotation = Quaternion.LookRotation (targetPos - transform.position);
-		transform.rotation = Quaternion.Lerp (transform.rotation, finalRotation, Time.deltaTime * _rotateLerpSpeed);
-	//	transform.LookAt (targetPos);
+
+
+		transform.LookAt (targetPos);
 	}
 }

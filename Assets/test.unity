@@ -3180,7 +3180,10 @@ MonoBehaviour:
   _rotationSpeed: 180
   _invertAxis: 0
   _moveLerpSpeed: 5
-  _rotateLerpSpeed: 10
+  _wallClipLerp: 10
+  _raycastMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
 --- !u!1 &1596225261
 GameObject:
   m_ObjectHideFlags: 0
