@@ -14,8 +14,6 @@ public class CameraControl : MonoBehaviour {
 
 	public LayerMask _raycastMask;
 
-
-
 	private float _angle = 0;
 	private float _currentDistance;
 
@@ -32,10 +30,11 @@ public class CameraControl : MonoBehaviour {
 
 
 	void ProtectFromWallClip(){
-		Vector3 rayDirection = (_target.position + _offset) - transform.position;
+		Vector3 targetPos = _target.position + _offset;
+		Vector3 rayDirection = transform.position - targetPos;
 		rayDirection.Normalize ();
 		RaycastHit hitInfo;
-		bool hit = Physics.Raycast(transform.position,rayDirection,out hitInfo,_currentDistance,_raycastMask.value);
+		bool hit = Physics.Raycast(targetPos,rayDirection,out hitInfo,_currentDistance,_raycastMask.value);
 		if (hit) {
 			Debug.Log ("forward:"+hitInfo.collider.name);
 
@@ -48,20 +47,20 @@ public class CameraControl : MonoBehaviour {
 					_currentDistance = 0.5f;
 				}
 			}
-			Debug.DrawRay (transform.position, rayDirection * _distance, Color.green);
+			Debug.DrawRay (targetPos, rayDirection * _currentDistance, Color.green);
 		} else {
-			Debug.DrawRay (transform.position, -rayDirection * (_distance-_currentDistance), Color.red);
-			bool hitBackwards = Physics.Raycast (transform.position, -rayDirection,out hitInfo, _distance - _currentDistance, _raycastMask.value);
+			Debug.DrawRay (targetPos, rayDirection * ( _currentDistance+1), Color.red);
+			bool hitBackwards = Physics.Raycast (targetPos, rayDirection,out hitInfo, (_currentDistance)+1, _raycastMask.value);
 			if (!hitBackwards) {
 				_currentDistance += Time.fixedDeltaTime * _wallClipLerp;
 				if (_currentDistance > _distance) {
 					_currentDistance = _distance;
 				}
-				Debug.DrawRay (transform.position, -rayDirection * (_distance - _currentDistance), Color.magenta);
+				Debug.DrawRay (targetPos, rayDirection * (_currentDistance+1), Color.magenta);
 				Debug.Log ("NO backwards");
 
 			} else {
-				Debug.DrawRay (transform.position, -rayDirection * (_distance-_currentDistance), Color.cyan);
+				Debug.DrawRay (targetPos, rayDirection * (_currentDistance+1), Color.cyan);
 				Debug.Log ("backwards:" + hitInfo.collider.name);
 			}
 		}

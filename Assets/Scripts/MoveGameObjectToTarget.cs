@@ -10,8 +10,10 @@ public class MoveGameObjectToTarget : MonoBehaviour {
 
 	private bool _startLerp;
 
+	private CameraControl _mainCameraScript;
 	// Use this for initialization
 	void Start () {
+		_mainCameraScript = FindObjectOfType<CameraControl> ();
 	}
 
 	void Update(){
@@ -30,6 +32,7 @@ public class MoveGameObjectToTarget : MonoBehaviour {
 			if (distance < 0.1f) {
 				_startLerp = false;
 				this.enabled = false;
+				Invoke ("ReturnCameraToPlayer", 2.0f);
 			}
 		}
 
@@ -38,7 +41,13 @@ public class MoveGameObjectToTarget : MonoBehaviour {
 	void OnTriggerEnter (Collider other) {
 		if (other.tag == "Player") {
 			_startLerp = true;
+			_mainCameraScript.enabled = false;
 			GetComponent<Collider> ().enabled = false;
 		}
+	}
+
+	void ReturnCameraToPlayer(){
+		_mainCameraScript.enabled = true;
+
 	}
 }

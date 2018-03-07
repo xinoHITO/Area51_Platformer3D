@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour {
 	[Header("MOVEMENT")]
+	public bool _canControl = true;
 	public float _walkSpeed = 2;
 	public float _runSpeed = 5;
 	public float _crouchSpeed = 1;
@@ -47,15 +48,26 @@ public class PlayerControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		_v = Input.GetAxis ("Vertical");
-		_h = Input.GetAxis("Horizontal");
-		_pressedLeftClick = Input.GetMouseButtonDown (0);
-		_pressedShift = Input.GetKey (KeyCode.LeftShift);
-		_pressedControl = Input.GetKey (KeyCode.LeftControl);
-		_pressedSpace = Input.GetKeyDown (KeyCode.Space);
+		
+
+		if (_canControl) {
+			_v = Input.GetAxis ("Vertical");
+			_h = Input.GetAxis("Horizontal");
+			_pressedLeftClick = Input.GetMouseButtonDown (0);
+			_pressedShift = Input.GetKey (KeyCode.LeftShift);
+			_pressedControl = Input.GetKey (KeyCode.LeftControl);
+			_pressedSpace = Input.GetKeyDown (KeyCode.Space);
+		} else {
+			_v = 0;
+			_h = 0;
+			_pressedLeftClick = false;
+			_pressedShift = false;
+			_pressedControl = false;
+			_pressedSpace = false;
+		}
+
 
 		Crouch ();
-
 		ManageAnimations ();
 
 	}
