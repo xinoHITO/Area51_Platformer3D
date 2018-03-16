@@ -12,6 +12,7 @@ public class Damage : MonoBehaviour {
 	
 	void OnTriggerEnter (Collider other) {
 		if (other.tag == "Enemy") {
+			
 			other.GetComponent<Health> ()._health -= _damage;
 			other.GetComponent<EnemyAI>().Knockback(transform,_knockback);
 		}

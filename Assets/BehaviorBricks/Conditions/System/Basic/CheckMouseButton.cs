@@ -22,18 +22,21 @@ namespace BBCore.Conditions
 
         public override bool Check()
         {
+			bool didClick = false;
             switch (mouseAction)
             {
-                case MouseAction.down:
-                    return Input.GetMouseButtonDown((int)button);
-
+			case MouseAction.down:
+				didClick = Input.GetMouseButtonDown ((int)button);
+				break;
                 case MouseAction.up:
-                    return Input.GetMouseButtonUp((int)button);
-
+					didClick = Input.GetMouseButtonUp((int)button);
+				break;
                 case MouseAction.during:
-                    return Input.GetMouseButton((int)button);
+					didClick = Input.GetMouseButton((int)button);
+				break;
             }
-            return false;
+
+			return didClick;
 		}
     }
 }

@@ -25,10 +25,6 @@ namespace BBUnity.Actions
         [Help("LayerMask with layers that must be considered relevant to calculate the game object and position under the mouse cursor")]
         public LayerMask mask;
 
-        public override void OnStart()
-        {
-			Debug.Log ("from mouse to world");
-        }
 
         public override TaskStatus OnUpdate()
         {

@@ -17,6 +17,7 @@ namespace BBUnity.Conditions
 
 		public override bool Check()
 		{
+		//	Debug.Log ("target is:" + target);
 			bool result = (gameObject.transform.position - target.transform.position).sqrMagnitude < closeDistance * closeDistance;
 			return result;
 		}
