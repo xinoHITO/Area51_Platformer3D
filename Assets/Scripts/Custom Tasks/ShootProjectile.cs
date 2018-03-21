@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BBUnity.Actions
 {
 
-    [Action("Basic/ShootProjectile")]
+    [Action("Enemy/ShootProjectile")]
     [Help("Creates a projectile and sets the it rigidbody's velocity towards the target")]
 	public class ShootProjectile : GOAction
     {
@@ -14,9 +14,16 @@ namespace BBUnity.Actions
 		[Help("Projectile prefab")]
 		public Rigidbody projectile;
 
+		[InParam("ShootPoint")]
+		[Help("Bullet spawn point")]
+		public GameObject shootPoint;
+
+
 		[InParam("target")]
 		[Help("Target to shoot")]
 		public GameObject target;
+
+
 
 		[InParam("speed")]
 		[Help("The projectile's speed toward the target")]
@@ -30,7 +37,12 @@ namespace BBUnity.Actions
 				Vector3 dir = target.transform.position-gameObject.transform.position;
 				dir.Normalize ();
 
-				Rigidbody newProjectile =Object.Instantiate(projectile, gameObject.transform.position, gameObject.transform.rotation);
+				Rigidbody newProjectile;
+				if (shootPoint == null) {
+					newProjectile = Object.Instantiate (projectile, gameObject.transform.position, gameObject.transform.rotation);
+				} else {
+					newProjectile = Object.Instantiate(projectile, shootPoint.transform.position, gameObject.transform.rotation);
+				}
 				newProjectile.velocity = dir * speed;
 				return TaskStatus.COMPLETED;
 			}

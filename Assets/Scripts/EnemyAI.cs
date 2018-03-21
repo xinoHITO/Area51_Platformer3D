@@ -6,23 +6,19 @@ public class EnemyAI : MonoBehaviour {
 	public float _weight = 10;
 
 
-	private Vector3 _impact;
+	protected Vector3 _impact;
+	protected Rigidbody _rigidbody;
 
-	private Health _healthScript;
-	private Rigidbody _rigidbody;
-	private Renderer _renderer;
+	protected Health _healthScript;
 	// Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		_healthScript = GetComponent<Health> ();
 		_rigidbody = GetComponent<Rigidbody> ();
-		_renderer = GetComponentInChildren<Renderer> ();
 
-		_rigidbody.isKinematic = true;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
+	protected virtual void Update () {
 		if (_impact.magnitude > 0.1f) {
 			_rigidbody.velocity = _impact;
 			///partimos el vector en 2 partes... su direccion y su magnitud
@@ -34,13 +30,8 @@ public class EnemyAI : MonoBehaviour {
 			_impact = impactDir * impactMagnitude;
 			if (impactMagnitude < 0.1f) {
 				_impact = Vector3.zero;
-				_renderer.material.color = Color.white;
 				_rigidbody.isKinematic = true;
 			}
-		}
-
-		if (_healthScript._health <= 0) {
-			Destroy (gameObject);
 		}
 	}
 
@@ -51,7 +42,16 @@ public class EnemyAI : MonoBehaviour {
 		dir.y = 0;
 		dir.Normalize ();
 		_impact = dir * force;
-		_renderer.material.color = Color.red;
 		_rigidbody.isKinematic = false;
+	}
+
+	public bool IsHurt(){
+		//si estas en knockback
+		//o muerto... esto retorna true
+		if (_impact.magnitude > 0.1f || _healthScript._health <= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

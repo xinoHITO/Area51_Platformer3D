@@ -57,11 +57,11 @@ public class CameraControl : MonoBehaviour {
 					_currentDistance = _distance;
 				}
 				Debug.DrawRay (targetPos, rayDirection * (_currentDistance+1), Color.magenta);
-				Debug.Log ("NO backwards");
+//				Debug.Log ("NO backwards");
 
 			} else {
 				Debug.DrawRay (targetPos, rayDirection * (_currentDistance+1), Color.cyan);
-				Debug.Log ("backwards:" + hitInfo.collider.name);
+//				Debug.Log ("backwards:" + hitInfo.collider.name);
 			}
 		}
 	}
