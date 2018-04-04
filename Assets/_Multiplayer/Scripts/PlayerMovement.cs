@@ -35,15 +35,18 @@ public class PlayerMovement : NetworkBehaviour {
 		_rigidbody.MoveRotation (rot);
 
 
-		Vector3 pos = transform.position;
-		pos += transform.forward * v * _walkSpeed * Time.deltaTime;
-		_rigidbody.MovePosition (pos);
+		_rigidbody.velocity = transform.forward * v * _walkSpeed;
 	
 
 		if (Input.GetMouseButtonDown(0)) {
 			CmdFire ();
 		}
 
+	}
+	//Esta funcion se ejecuta cuando el cliente
+	//dueño de este objeto se conecta a la partida
+	public override void OnStartLocalPlayer(){
+		GetComponent<Renderer> ().material.color = Color.blue;
 	}
 
 	[Command]
